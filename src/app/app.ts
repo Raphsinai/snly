@@ -14,6 +14,10 @@ export class App {
   protected readonly fullscreenError = signal<string | null>(null);
   protected readonly canRenderApp = computed(() => this.isFullscreen());
 
+  protected readonly expandedOptionId = signal<'heal' | 'spiral' | null>(null);
+
+  protected readonly isOptionExpanded = computed(() => this.expandedOptionId() != null);
+
   private readonly destroyRef = inject(DestroyRef);
 
   constructor() {
@@ -132,6 +136,19 @@ export class App {
       }
     };
 
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && this.isOptionExpanded()) {
+        event.preventDefault();
+        this.closeOption();
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown, { passive: false });
+
+    this.destroyRef.onDestroy(() => {
+      window.removeEventListener('keydown', onKeyDown);
+    });
+
     // Ensure <body> exists before mounting.
     afterNextRender(() => {
       // Reactively mount/unmount based on whether the gate is visible.
@@ -171,5 +188,13 @@ export class App {
     } catch {
       this.fullscreenError.set('Fullscreen was blocked by the browser. Please allow fullscreen and try again.');
     }
+  }
+
+  protected openOption(optionId: 'heal' | 'spiral') {
+    this.expandedOptionId.set(optionId);
+  }
+
+  protected closeOption() {
+    this.expandedOptionId.set(null);
   }
 }

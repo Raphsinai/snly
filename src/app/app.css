@@ -233,4 +233,9 @@
     .gate-cursor-dot {
         transition: none;
     }
+
+    /* Avoid scaling animations for the option cards */
+    #options button {
+        transition: none !important;
+    }
 }

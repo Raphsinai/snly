@@ -152,11 +152,111 @@
       </div>
     </section>
 
-    <section id="two" class="snap-section" aria-labelledby="two-title" tabindex="-1">
+    <section id="options" class="snap-section" aria-labelledby="options-title" tabindex="-1">
       <div class="section-inner">
-        <h2 id="two-title" class="text-5xl text-center">you have two options</h2>
-        <p class="mt-6 text-base text-zinc-300">scroll to continue.</p>
+        <h2 id="options-title" class="text-5xl text-center">you have two options</h2>
+
+        <div class="mt-10 flex gap-6 justify-center">
+          <button
+            type="button"
+            class="group w-1/4 relative rounded-2xl border border-zinc-700 bg-black/40 px-6 py-8 text-left shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition-transform duration-200 ease-out hover:scale-[1.02] focus-visible:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
+            (click)="openOption('heal')"
+            aria-haspopup="dialog"
+            aria-controls="option-dialog"
+            [attr.aria-expanded]="expandedOptionId() === 'heal'"
+            (pointerenter)="openOption('heal')">
+            <span class="block text-3xl">heal</span>
+            <span class="sr-only">Open option: heal</span>
+          </button>
+
+          <button
+            type="button"
+            class="group w-1/4 relative rounded-2xl border border-zinc-700 bg-black/40 px-6 py-8 text-left shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition-transform duration-200 ease-out hover:scale-[1.02] focus-visible:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
+            (click)="openOption('spiral')"
+            aria-haspopup="dialog"
+            aria-controls="option-dialog"
+            [attr.aria-expanded]="expandedOptionId() === 'spiral'"
+            (pointerenter)="openOption('spiral')">
+            <span class="block text-3xl">spiral</span>
+            <span class="sr-only">Open option: spiral</span>
+          </button>
+        </div>
       </div>
+
+      @if (isOptionExpanded()) {
+        <div class="fixed inset-0 z-10002">
+          <!-- Backdrop: closes when pointer enters it (i.e. you're outside the modal). -->
+          <div
+            class="absolute inset-0 bg-black/70"
+            aria-hidden="true"
+            (pointerenter)="closeOption()"
+            (click)="closeOption()"></div>
+
+          <!-- Centered modal surface (kept above backdrop) -->
+          <div class="absolute inset-0 grid place-items-center p-4 pointer-events-none">
+            <div
+              id="option-dialog"
+              role="dialog"
+              aria-modal="true"
+              [attr.aria-labelledby]="expandedOptionId() === 'heal' ? 'option-heal-title' : 'option-spiral-title'"
+              class="relative pointer-events-auto w-full max-w-2xl rounded-2xl border border-zinc-700 bg-neutral-950 px-6 py-8 shadow-[0_20px_70px_rgba(0,0,0,0.65)]">
+              <div class="flex items-start justify-between gap-4">
+                <h3
+                  [id]="expandedOptionId() === 'heal' ? 'option-heal-title' : 'option-spiral-title'"
+                  class="text-4xl">
+                  @if (expandedOptionId() === 'heal') { heal } @else { spiral }
+                </h3>
+
+                <button
+                  type="button"
+                  class="rounded-full border border-zinc-700 bg-white/10 px-3 py-2 text-sm text-white transition hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
+                  (click)="closeOption()">
+                  close
+                </button>
+              </div>
+
+              <div class="mt-5 text-zinc-200">
+                @if (expandedOptionId() === 'heal') {
+                  <div class="space-y-4">
+                    <p class="text-lg leading-relaxed">
+                      you don’t “get over it” by skipping it. you heal by walking straight through the part you’ve been
+                      avoiding.
+                    </p>
+                    <ul class="list-disc pl-6 text-lg leading-relaxed text-zinc-200">
+                      <li>tell the truth about what happened — to yourself first.</li>
+                      <li>feel the grief without turning it into a verdict about your worth.</li>
+                      <li>set boundaries that protect future-you, even when present-you misses them.</li>
+                      <li>build a life that doesn’t require their permission to feel okay.</li>
+                    </ul>
+                    <p class="text-base leading-relaxed text-zinc-300">
+                      it’s slower. it’s quieter. it’s real. and one day you’ll notice you went an entire hour without
+                      thinking about them — then a day — then a week.
+                    </p>
+                  </div>
+                } @else {
+                  <div class="space-y-4">
+                    <p class="text-lg leading-relaxed">
+                      the spiral feels productive, because it keeps you busy. but it’s just pain with a routine.
+                    </p>
+                    <ul class="list-disc pl-6 text-lg leading-relaxed text-zinc-200">
+                      <li>re-read messages like they’re clues to a different ending.</li>
+                      <li>refresh their profile, hoping your heart will finally accept what your eyes already saw.</li>
+                      <li>compare yourself to the version of you they left — and hate the current one.</li>
+                      <li>rewrite the story until you’re either the villain or the fool. anything but human.</li>
+                    </ul>
+                    <p class="text-base leading-relaxed text-zinc-300">
+                      it doesn’t end. it just gets familiar. and familiarity can start to look like comfort — until you
+                      realize it’s been months and you’re still living on the same sentence.
+                    </p>
+                  </div>
+                }
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+      }
     </section>
 
   </main>
