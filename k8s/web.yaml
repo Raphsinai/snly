@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snly-website
+  labels:
+    app: snly-website
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: snly-website
+  template:
+    metadata:
+      labels:
+        app: snly-website
+    spec:
+      containers:
+        - name: web
+          image: registry.tensorhost.com/snly-website:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 2
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: snly-website
+  labels:
+    app: snly-website
+spec:
+  selector:
+    app: snly-website
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  type: ClusterIP
+---
+# Optional: Ingress (requires an ingress controller)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: snly-website
+  labels:
+    app: snly-website
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: snly.raphsinai.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: snly-website
+                port:
+                  number: 80
