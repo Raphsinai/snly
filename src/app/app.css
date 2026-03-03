@@ -1,0 +1,236 @@
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+
+* {
+    font-family: "Special Elite", system-ui;
+    font-weight: 400;   
+    font-style: normal;
+}
+
+/* Full-screen scroll snapping */
+.snap-container {
+    height: 100vh;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge Legacy */
+}
+
+.snap-container::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
+.snap-section {
+    min-height: 100vh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    display: grid;
+    place-items: center;
+    padding: 2.5rem 1.5rem;
+}
+
+.section-inner {
+    width: min(70rem, 100%);
+}
+
+/* Fixed in-page nav */
+.section-nav {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    z-index: 10;
+}
+
+.section-nav__link {
+    display: inline-block;
+    padding: 0.375rem 0.6rem;
+    border: 1px solid rgb(63 63 70);
+    border-radius: 9999px;
+    background: rgb(0 0 0 / 0.55);
+    color: white;
+    text-decoration: none;
+    font-size: 0.875rem;
+    line-height: 1;
+}
+
+.section-nav__link:hover {
+    background: rgb(0 0 0 / 0.75);
+}
+
+.section-nav__link:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 3px;
+}
+
+/* Ensure keyboard users can see which section received focus after anchor jumps */
+.snap-section:focus {
+    outline: none;
+}
+
+.snap-section:focus-visible {
+    outline: 2px solid white;
+    outline-offset: -0.75rem;
+}
+
+/* Staggered bottom-up reveal */
+.word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(0.75rem);
+    animation: word-reveal 600ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+.word + .word {
+    margin-left: 0.5ch;
+}
+
+.word:nth-child(1) { animation-delay: 0ms; }
+.word:nth-child(2) { animation-delay: 400ms; }
+.word:nth-child(3) { animation-delay: 600ms; }
+.word:nth-child(4) { animation-delay: 800ms; }
+.word:nth-child(5) { animation-delay: 1200ms; }
+
+@keyframes word-reveal {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.after-intro {
+    opacity: 0;
+    transform: translateY(0.75rem);
+    visibility: hidden;
+    pointer-events: none;
+    animation: after-intro-reveal 450ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+
+    /* last word delay (1100ms) + word duration (600ms) + small buffer */
+    animation-delay: 1800ms;
+}
+
+@keyframes after-intro-reveal {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        visibility: visible;
+        pointer-events: auto;
+    }
+}
+
+/* Fullscreen gate (required) */
+.fullscreen-gate {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: grid;
+    place-items: center;
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(2px);
+}
+
+.fullscreen-gate__panel {
+    width: min(30rem, 100%);
+    border: 1px solid rgb(63 63 70);
+    border-radius: 1rem;
+    background: rgba(0, 0, 0, 0.9);
+    padding: 1.25rem;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04), 0 16px 44px rgba(0, 0, 0, 0.65);
+}
+
+.fullscreen-gate__title {
+    margin: 0;
+    font-size: 1.25rem;
+    line-height: 1.25;
+    color: white;
+}
+
+.fullscreen-gate__hint {
+    margin: 0.5rem 0 1rem;
+    font-size: 1rem;
+    color: rgb(212 212 216);
+}
+
+.fullscreen-gate__btn {
+    appearance: none;
+    border: 1px solid rgb(82 82 91);
+    border-radius: 9999px;
+    background: white;
+    color: black;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.fullscreen-gate__btn:hover {
+    filter: brightness(0.95);
+}
+
+.fullscreen-gate__btn:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 3px;
+}
+
+.fullscreen-gate__error {
+    margin: 0.9rem 0 0;
+    font-size: 0.95rem;
+    color: rgb(253 186 116); /* orange-300 */
+}
+
+/* Remove obsolete waiting screen styles */
+.fullscreen-wait,
+.fullscreen-wait__title,
+.fullscreen-wait__hint {
+    display: none;
+}
+
+/* Gate cursor dot (used only while fullscreen gate is visible) */
+.gate-cursor-dot {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.98);
+    pointer-events: none;
+    z-index: 10001; /* above .fullscreen-gate */
+
+    /* Center on pointer; scale/position set by JS */
+    transform: translate3d(-100px, -100px, 0);
+
+    /* Subtle glow */
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
+
+    /* Smooth feel */
+    will-change: transform;
+    transition: transform 80ms linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .snap-container {
+        scroll-behavior: auto;
+    }
+
+    .word {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+
+    .after-intro {
+        animation: none;
+        opacity: 1;
+        transform: none;
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    .gate-cursor-dot {
+        transition: none;
+    }
+}
